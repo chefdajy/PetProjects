@@ -5,11 +5,11 @@ import pickle
 import os
 from scipy.stats import norm
 
+################################################
+#### BLACK SCHOLES OPTIONS PRICING FUNCTION ####
+################################################
 
-
-# ========== BLACK SCHOLES OPTIONS PRICING FUNCTION ==========
-
-#Black-Scholes calculation for European option.
+# Black-Scholes calculation for European options.
 def black_scholes_price(S, K, T, r, sigma, option_type='call'):
     if T <= 0:
         return max(0.0, (S - K) if option_type == 'call' else (K - S))
@@ -20,13 +20,12 @@ def black_scholes_price(S, K, T, r, sigma, option_type='call'):
     else:
         return K * math.exp(-r * T) * norm.cdf(-d2) - S * norm.cdf(-d1)
 
+################################################
+####### DIRECTIONAL LEARNING - QLEARNING #######
+################################################
 
-
-# ========== DIRECTIONAL LEARNING: QLEARNING ========== (uses pickle)
-
-# Set up of QLearning agent key values for trade decision making.
-# Epsilon (probability of choosing random action vs. known rewarding action) is set at 0.3 to start.
-class QLearningAgent:
+# Set up of QLearning agent key values for trade decision making.                       
+# Inputs include Epsilon (probability of choosing random action vs. known rewarding action) which is set at 0.3 to start. Class QLearningAgent:
     def __init__(self, alpha=0.1, gamma=0.95, epsilon=0.2):
         self.q_table = {}
         self.alpha = alpha
@@ -97,8 +96,9 @@ def ai_decision_q(agent, price, vol, context_clue):
     strike = round(price + offset)
     return strike, expiry, opt_type, state, action
 
-
-# ========== PRETRAINING AGENT ==========
+################################################
+######## PRETRAINING - QLEARNING AGENT #########
+################################################
 
 # I realised the AI was not performing that well, so pre-training function pre-loading the game up.
 # Pretraining the AI Agent with random scenarios so that it is better at the game before starting.
@@ -130,16 +130,14 @@ def pretrain_agent(agent, episodes=10000):
 
         agent.update(state, action, reward, next_state)
 
-#To avoid wasting training the agent on market noise, this is a simpler market simulation.
+# To avoid wasting training the agent on market noise, this is a simpler market simulation.
 def simulate_market(price, simulatedsentiment):
     price_change = simulatedsentiment * 0.1 * price
     return price + price_change
 
-
-
-
-
-# ========== GAME CODE ========== (uses tkinter)
+###############################################
+################## GAME CODE ##################
+###############################################
 
 # Game Class Setup - Handles UI, game state and trading logic.
 class OptionsGame:
@@ -163,7 +161,6 @@ class OptionsGame:
         self.show_start_screen()
 
     # ---------- START SCREEN ----------
-
     # Start screen with title, and instructions, and sets round number to 1.
     def show_start_screen(self):
         self.round = 1
@@ -191,7 +188,6 @@ class OptionsGame:
                  bg="black", fg="white", wraplength=550, justify="center").pack(pady=(0, 10))
 
     # ---------- GAME SCREEN + SETUP ----------
-
     # Game setup for each round, with a random market scenario and list for actions.
     def setup_game(self):
         self.clear_screen()
@@ -432,7 +428,7 @@ class OptionsGame:
 
 
 
-# ========== Main Execution ==========
+# ========== Game Execution ==========
 
 if __name__ == "__main__":
     # Create the QLearning agent instance
